@@ -5,11 +5,9 @@ import 'package:http/http.dart' as http;
 import 'package:login_auth/components/myTextField.dart';
 import 'package:login_auth/components/mybutton.dart';
 import 'package:login_auth/components/registerButton.dart';
-import 'package:login_auth/components/useridprovider.dart';
 import 'package:login_auth/pages/loggedin.dart';
 import 'package:login_auth/pages/signup_page.dart';
 import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
 
 
 
