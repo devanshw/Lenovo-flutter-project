@@ -9,6 +9,8 @@ import 'package:login_auth/pages/loggedin.dart';
 import 'package:login_auth/pages/signup_page.dart';
 import 'dart:convert';
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 
 class LoginPage extends StatelessWidget {
@@ -36,6 +38,7 @@ class LoginPage extends StatelessWidget {
       if (response.statusCode == 200) {
         // Parse the JSON response
         final Map<String, dynamic> data = jsonDecode(response.body);
+        print(response.body);
         //final userId = data['_id'];
        // await saveUserId(userId);
        
@@ -46,6 +49,13 @@ class LoginPage extends StatelessWidget {
           // Perform additional validation based on your requirements
           // (e.g., check presence of specific user data in response)
           print('Login successful! User: ${data['user']['username'] ?? ''}');
+           final prefs = await SharedPreferences.getInstance();
+            await prefs.setString('username', username);
+          
+
+         
+
+          
           
           
        

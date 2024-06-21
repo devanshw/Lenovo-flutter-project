@@ -9,7 +9,7 @@ environment:
 dependencies:
     http: ^1.2.1
     provider: ^6.0.0 # Adjust version if needed
-    shared_preferences: ^2.0.9
+    shared_preferences: ^2.0.15
 
 
 
