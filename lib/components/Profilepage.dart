@@ -1,7 +1,7 @@
-// ignore_for_file: prefer_interpolation_to_compose_strings
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:login_auth/pages/Updatedetails_page.dart';
+import 'package:login_auth/pages/login_page.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -24,48 +24,7 @@ class Profilepage extends StatelessWidget {
               // Handle case where user is not found
               return const Center(child: Text('User not found'));
             }
-            return Stack( // Use Stack widget for positioning
-              children: [
-                // Username at the top (replace with your desired position)
-                Positioned(
-                  top: 20.0, // Adjust top padding as needed
-                  left: 20.0, // Adjust left padding as needed
-                  child: Row(
-                    children: [
-                      const Icon(
-                        Icons.account_circle, // Replace with your desired icon
-                        size: 60.0, // Adjust icon size as needed
-                        color: Color.fromARGB(255, 0, 0, 0), // Adjust icon color as needed
-                      ),
-                      const SizedBox(width: 10.0), // Spacing between icon and text
-                      _buildDetailText(
-                        'Hey ${user['username']}',
-                        Colors.black, // Adjust text color as needed
-                      60.0, // Increased font size for username
-                      ),
-                    ],
-                  ),
-                ),
-                // Rest of the user details centered
-                Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const SizedBox(height: 50.0), // Spacing after username
-                      _buildDetailText('First Name: ${user['firstName']}', Colors.teal, 16.0),
-                      const SizedBox(height: 5.0),
-                      _buildDetailText('Last Name: ${user['lastName']}', Colors.teal, 16.0),
-                      const SizedBox(height: 5.0),
-                      _buildDetailText('Age: ${user['Age']}', Colors.teal, 16.0),
-                      const SizedBox(height: 5.0),
-                      _buildDetailText('Job Title: ${user['JobTitle']}', Colors.teal, 16.0),
-                      const SizedBox(height: 5.0),
-                      _buildDetailText('Company Name: ${user['companyName']}', Colors.teal, 16.0),
-                    ],
-                  ),
-                ),
-              ],
-            );
+            return _buildUserDetails(context, user); // Pass context to _buildUserDetails
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           }
@@ -75,7 +34,57 @@ class Profilepage extends StatelessWidget {
       ),
     );
   }
-    Future<String> _getUsername() async {
+
+  Widget _buildUserDetails(BuildContext context, Map<String, dynamic> user) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          _buildDetailText('Hey ${user['username']}', Colors.blue, 24.0), // Username
+          const SizedBox(height: 10.0), // Spacing between lines
+          _buildDetailText('First Name: ${user['firstName']}', Colors.teal, 16.0),
+          const SizedBox(height: 5.0),
+          _buildDetailText('Last Name: ${user['lastName']}', Colors.teal, 16.0),
+          const SizedBox(height: 5.0),
+          _buildDetailText('Age: ${user['Age']}', Colors.teal, 16.0),
+          const SizedBox(height: 5.0),
+          _buildDetailText('Job Title: ${user['JobTitle']}', Colors.teal, 16.0),
+          const SizedBox(height: 5.0),
+          _buildDetailText('Company Name: ${user['companyName']}', Colors.teal, 16.0),
+          ElevatedButton(
+            onPressed: () async {
+              await _logout(context); // Pass context to _logout
+            },
+            child: const Text('Logout'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              await _update(context); // Pass context to _logout
+            },
+            child: const Text('Upadate User Details'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _logout(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('username'); // Remove username from local storage
+   Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginPage()), 
+      ); // Redirect to home page
+  }
+   Future<void> _update(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+   Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => Updatedetails() ), 
+      );
+  }
+
+  Future<String> _getUsername() async {
     final prefs = await SharedPreferences.getInstance();
     final savedUsername = prefs.getString('username');
     return savedUsername ?? '';
@@ -83,16 +92,13 @@ class Profilepage extends StatelessWidget {
 
   Future<Map<String, dynamic>?> _getUserDetails() async {
     final username = await _getUsername();
-    
-    
-
     try {
       final response = await http.post(
         Uri.parse(apiUrl),
-      body: {'username': username},
+        body: {'username': username},
       );
       print("for api call");
-      print (username  );
+      print(username);
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body) as Map<String, dynamic>;
         return data;
@@ -106,46 +112,20 @@ class Profilepage extends StatelessWidget {
     }
   }
 
-
-
-  
-  Widget _buildUserDetails(Map<String, dynamic> user) {
-  return Center(
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        _buildDetailText('Hey ${user['username']}', Colors.blue, 24.0), // Username
-        const SizedBox(height: 10.0), // Spacing between lines
-        _buildDetailText('First Name: ${user['firstName']}', Colors.teal, 16.0),
-        const SizedBox(height: 5.0),
-        _buildDetailText('Last Name: ${user['lastName']}', Colors.teal, 16.0),
-        const SizedBox(height: 5.0),
-        _buildDetailText('Age: ${user['Age']}', Colors.teal, 16.0),
-        const SizedBox(height: 5.0),
-        _buildDetailText('Job Title: ${user['JobTitle']}', Colors.teal, 16.0),
-        const SizedBox(height: 5.0),
-        _buildDetailText('Company Name: ${user['companyName']}', Colors.teal, 16.0),
-      ],
-    ),
-  );
-}
-
-// Reusable function to create styled text with rounded borders
-Widget _buildDetailText(String text, Color color, double fontSize) {
-  return Container(
-    padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
-    decoration: BoxDecoration(
-      color: color.withOpacity(0.2), // Semi-transparent background
-      borderRadius: BorderRadius.circular(10.0), // Rounded corners
-    ),
-    child: Text(
-      text,
-      style: TextStyle(
-        fontSize: fontSize,
-        color: color,
+  Widget _buildDetailText(String text, Color color, double fontSize) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.2), // Semi-transparent background
+        borderRadius: BorderRadius.circular(10.0), // Rounded corners
       ),
-    ),
-  );
-}
-
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: fontSize,
+          color: color,
+        ),
+      ),
+    );
+  }
 }
