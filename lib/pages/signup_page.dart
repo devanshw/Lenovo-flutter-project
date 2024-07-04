@@ -39,7 +39,7 @@ Future<void> signUpUser(BuildContext context, String username, String password, 
       print("Signed up successfully");
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => Loggedin()), 
+        MaterialPageRoute(builder: (context) => LoginPage()), 
       );
     } else {
       print('Error: ${response.statusCode}');
@@ -97,35 +97,35 @@ Future<void> signUpUser(BuildContext context, String username, String password, 
                 Mytextfield(
                   controller: firstnameController,
                   hintText: "First Name",
-                  obscureText: true,
+                  obscureText: false,
                 ),
                 const SizedBox(height: 15),
 
                 Mytextfield(
                   controller: lastnameController,
                   hintText: "Last Name",
-                  obscureText: true,
+                  obscureText: false,
                 ),
                 const SizedBox(height: 15),
 
                 Mytextfield(
                   controller: AgeController,
                   hintText: "Age",
-                  obscureText: true,
+                  obscureText: false,
                 ),
                 const SizedBox(height: 15),
 
                 Mytextfield(
                   controller: JobtitleController,
                   hintText: "Job Title",
-                  obscureText: true,
+                  obscureText: false,
                 ),
                 const SizedBox(height: 15),
 
                 Mytextfield(
                   controller: CompanynameController,
                   hintText: "Company Name",
-                  obscureText: true,
+                  obscureText: false,
                 ),
                 const SizedBox(height: 15),
 

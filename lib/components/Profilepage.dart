@@ -1,6 +1,7 @@
+// ignore_for_file: sort_child_properties_last
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:login_auth/pages/Updatedetails_page.dart';
 import 'package:login_auth/pages/login_page.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -36,37 +37,40 @@ class Profilepage extends StatelessWidget {
   }
 
   Widget _buildUserDetails(BuildContext context, Map<String, dynamic> user) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          _buildDetailText('Hey ${user['username']}', Colors.blue, 24.0), // Username
-          const SizedBox(height: 10.0), // Spacing between lines
-          _buildDetailText('First Name: ${user['firstName']}', Colors.teal, 16.0),
-          const SizedBox(height: 5.0),
-          _buildDetailText('Last Name: ${user['lastName']}', Colors.teal, 16.0),
-          const SizedBox(height: 5.0),
-          _buildDetailText('Age: ${user['Age']}', Colors.teal, 16.0),
-          const SizedBox(height: 5.0),
-          _buildDetailText('Job Title: ${user['JobTitle']}', Colors.teal, 16.0),
-          const SizedBox(height: 5.0),
-          _buildDetailText('Company Name: ${user['companyName']}', Colors.teal, 16.0),
-          ElevatedButton(
-            onPressed: () async {
-              await _logout(context); // Pass context to _logout
-            },
-            child: const Text('Logout'),
+  return Center(
+    child: Column(
+      children: [
+        _buildDetailText(
+          'Hey ${user['username']}',
+          Colors.blue,
+          50.0,
+         
+        ),
+        const SizedBox(height: 10.0), // Spacing between lines
+        // Rest of the details
+        _buildDetailText('First Name: ${user['firstName']}', Colors.teal, 16.0),
+        const SizedBox(height: 5.0),
+        _buildDetailText('Last Name: ${user['lastName']}', Colors.teal, 16.0),
+        const SizedBox(height: 5.0),
+        _buildDetailText('Age: ${user['Age']}', Colors.teal, 16.0),
+        const SizedBox(height: 5.0),
+        _buildDetailText('Job Title: ${user['JobTitle']}', Colors.teal, 16.0),
+        const SizedBox(height: 5.0),
+        _buildDetailText('Company Name: ${user['companyName']}', Colors.teal, 16.0),
+        const SizedBox(height: 10.0), 
+        ElevatedButton(
+          onPressed: () async {
+            await _logout(context); // Pass context to _logout
+          },
+          child: const Text('Logout'),
+          style: ElevatedButton.styleFrom(
+            minimumSize: Size(MediaQuery.of(context).size.width, 40), // Full width
           ),
-          ElevatedButton(
-            onPressed: () async {
-              await _update(context); // Pass context to _logout
-            },
-            child: const Text('Upadate User Details'),
-          ),
-        ],
-      ),
-    );
-  }
+        ),
+      ],
+    ),
+  );
+}
 
   Future<void> _logout(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
@@ -76,6 +80,7 @@ class Profilepage extends StatelessWidget {
         MaterialPageRoute(builder: (context) => LoginPage()), 
       ); // Redirect to home page
   }
+  /*
    Future<void> _update(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
    Navigator.pushReplacement(
@@ -83,7 +88,7 @@ class Profilepage extends StatelessWidget {
         MaterialPageRoute(builder: (context) => Updatedetails() ), 
       );
   }
-
+*/
   Future<String> _getUsername() async {
     final prefs = await SharedPreferences.getInstance();
     final savedUsername = prefs.getString('username');
