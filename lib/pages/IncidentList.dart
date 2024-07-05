@@ -41,6 +41,24 @@ class _IncidentListState extends State<IncidentList> {
     }
   }
 
+  Future<void> deleteIncident(String incidentId) async {
+    try {
+      final apiUrl = 'http://10.0.2.2:3000/api/incidentdel/$incidentId';
+
+      final response = await http.delete(Uri.parse(apiUrl));
+
+      if (response.statusCode == 200) {
+        // Refresh incident list after deletion
+        fetchIncidents();
+      } else {
+        print('Failed to delete incident: ${response.statusCode}');
+        // Optionally show an error message to the user
+      }
+    } catch (error) {
+      print('Error deleting incident: $error');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,6 +73,36 @@ class _IncidentListState extends State<IncidentList> {
                 return ListTile(
                   title: Text('Caller: ${incident['Caller']}'),
                   subtitle: Text('Category: ${incident['Category']}'),
+                  trailing: IconButton(
+                    icon: Icon(Icons.delete),
+                    onPressed: () {
+                      // Show confirmation dialog before deleting
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text('Confirm Delete'),
+                            content: Text('Are you sure you want to delete this incident?'),
+                            actions: <Widget>[
+                              TextButton(
+                                child: Text('Cancel'),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                              TextButton(
+                                child: Text('Delete'),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                  deleteIncident(incident['_id']);
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                  ),
                   onTap: () {
                     _showIncidentDetails(incident);
                   },
@@ -85,6 +133,8 @@ class _IncidentListState extends State<IncidentList> {
               Text('Service: ${incident['Service']}'),
               Text('Description: ${incident['Description']}'),
               Text('WorkNotes: ${incident['WorkNotes']}'),
+              Text('Incident ID: ${incident['_id']}'),
+              Text('Created By: ${incident['CreatedBy']}'),
               // Add more fields as needed
             ],
           ),

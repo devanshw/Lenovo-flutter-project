@@ -1,8 +1,11 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:login_auth/components/createIncidentButton.dart';
 import 'package:login_auth/components/myTextField.dart';
 import 'package:login_auth/pages/loggedin.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class IncidentPage extends StatelessWidget {
   final GlobalKey<ScaffoldMessengerState> scaffoldKey =
@@ -34,6 +37,13 @@ class IncidentPage extends StatelessWidget {
     String workNotes,
   ) async {
     try {
+      // Retrieve username from SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      final storedUsername = prefs.getString('username');
+
+      
+
+      // Perform API request to create incident
       final http.Response response = await http.post(
         Uri.parse(apiUrl),
         body: {
@@ -46,6 +56,8 @@ class IncidentPage extends StatelessWidget {
           'Urgency': urgency,
           'Description': description,
           'WorkNotes': workNotes,
+          'CreatedBy': storedUsername,
+           
         },
       );
 
@@ -69,7 +81,6 @@ class IncidentPage extends StatelessWidget {
           context,
           MaterialPageRoute(builder: (context) => Loggedin()),
         );
-
       } else {
         print('Error: ${response.statusCode}');
         String errorMessage = 'Incident creation failed!';
@@ -78,12 +89,21 @@ class IncidentPage extends StatelessWidget {
         } else {
           errorMessage = 'Error ${response.statusCode}: ${response.body}';
         }
-        scaffoldKey.currentState!
-            .showSnackBar(SnackBar(content: Text(errorMessage)));
+        showSnackBar(errorMessage);
       }
     } catch (error) {
       print('Error: $error');
+      showSnackBar('Error creating incident. Please try again later.');
     }
+  }
+
+  void showSnackBar(String message) {
+    scaffoldKey.currentState?.showSnackBar(
+      SnackBar(
+        content: Text(message),
+        duration: Duration(seconds: 3),
+      ),
+    );
   }
 
   @override
@@ -110,7 +130,7 @@ class IncidentPage extends StatelessWidget {
                 const SizedBox(height: 25),
                 Mytextfield(
                   controller: callerController,
-                  hintText: "Caller (Enter your Username)",
+                  hintText: "Caller",
                   obscureText: false,
                 ),
                 const SizedBox(height: 15),
