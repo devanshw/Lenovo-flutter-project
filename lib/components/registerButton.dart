@@ -20,13 +20,21 @@ class RegisterButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(8),
         ),
         child:Center(
-          child: Text("New User? Sign Up",
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-          ),
-          ),
+          child:  Text(
+                    "New User? Sign Up",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 19,
+                      fontWeight: FontWeight.bold,
+                      shadows: [
+                        Shadow(
+                          offset: Offset(2.0, 2.0),
+                          blurRadius: 3.0,
+                          color: Color.fromARGB(255, 0, 0, 0),
+                        ),
+                      ],
+                    ),
+                  ),
         )
       ),
     );

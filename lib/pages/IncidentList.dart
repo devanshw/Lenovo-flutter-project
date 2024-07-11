@@ -62,58 +62,98 @@ class _IncidentListState extends State<IncidentList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Incident List'),
-      ),
-      body: incidents.isNotEmpty
-          ? ListView.builder(
-              itemCount: incidents.length,
-              itemBuilder: (context, index) {
-                final incident = incidents[index];
-                return ListTile(
-                  title: Text('Caller: ${incident['Caller']}'),
-                  subtitle: Text('Category: ${incident['Category']}'),
-                  trailing: IconButton(
-                    icon: Icon(Icons.delete),
-                    onPressed: () {
-                      // Show confirmation dialog before deleting
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Text('Confirm Delete'),
-                            content: Text('Are you sure you want to delete this incident?'),
-                            actions: <Widget>[
-                              TextButton(
-                                child: Text('Cancel'),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                              TextButton(
-                                child: Text('Delete'),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                  deleteIncident(incident['_id']);
-                                },
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    },
-                  ),
-                  onTap: () {
-                    _showIncidentDetails(incident);
-                  },
-                );
-              },
-            )
-          : Center(
-              child: incidents.isEmpty
-                  ? Text('No incidents found')
-                  : CircularProgressIndicator(),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color.fromARGB(232, 95, 6, 43),
+              Color.fromARGB(255, 194, 17, 17),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 60.0),
+            Container(
+              alignment: Alignment.centerLeft,
+              margin: const EdgeInsets.symmetric(horizontal: 30.0),
+              child: Text(
+                'Active Incidents',
+                style: TextStyle(
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
             ),
+            const SizedBox(height: 10.0),
+            Expanded(
+              child: incidents.isNotEmpty
+                  ? ListView.builder(
+                      itemCount: incidents.length,
+                      itemBuilder: (context, index) {
+                        final incident = incidents[index];
+                        return Card(
+                          color: Colors.white.withOpacity(0.8),
+                          margin: EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 15),
+                          child: ListTile(
+                            title: Text('Caller: ${incident['Caller']}'),
+                            subtitle: Text('Category: ${incident['Category']}'),
+                            trailing: IconButton(
+                              icon: Icon(Icons.delete),
+                              onPressed: () {
+                                // Show confirmation dialog before deleting
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: Text('Confirm Delete'),
+                                      content: Text(
+                                          'Are you sure you want to delete this incident?'),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          child: Text('Cancel'),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                        ),
+                                        TextButton(
+                                          child: Text('Delete'),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                            deleteIncident(incident['_id']);
+                                          },
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              },
+                            ),
+                            onTap: () {
+                              _showIncidentDetails(incident);
+                            },
+                          ),
+                        );
+                      },
+                    )
+                  : Center(
+                      child: incidents.isEmpty
+                          ? Text(
+                              'No incidents found',
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 18),
+                            )
+                          : CircularProgressIndicator(),
+                    ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -150,10 +190,4 @@ class _IncidentListState extends State<IncidentList> {
       },
     );
   }
-}
-
-void main() {
-  runApp(MaterialApp(
-    home: IncidentList(),
-  ));
 }
